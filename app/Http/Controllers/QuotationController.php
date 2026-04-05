@@ -522,7 +522,7 @@ class QuotationController extends Controller
             420
         );
         $pdfBackgroundLogo = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/logo.jpg'),
+            public_path('assets/invoice/assets/background.png'),
             'packard-background-logo',
             420
         );
@@ -531,6 +531,24 @@ class QuotationController extends Controller
             'packard-dotted-background',
             420
         );
+        $pdfPhoneIcon = $this->optimizeImageForPdf(
+            public_path('assets/invoice/assets/telephone.png'),
+            'packard-phone-icon',
+            24
+        );
+        $pdfPhoneIcon = $this->makeIconWhiteForPdf($pdfPhoneIcon, 'packard-phone-icon-white');
+        $pdfEmailIcon = $this->optimizeImageForPdf(
+            public_path('assets/invoice/assets/email.png'),
+            'packard-email-icon',
+            24
+        );
+        $pdfEmailIcon = $this->makeIconWhiteForPdf($pdfEmailIcon, 'packard-email-icon-white');
+        $pdfLocationIcon = $this->optimizeImageForPdf(
+            public_path('assets/invoice/assets/location.png'),
+            'packard-location-icon',
+            24
+        );
+        $pdfLocationIcon = $this->makeIconWhiteForPdf($pdfLocationIcon, 'packard-location-icon-white');
 
         $signatoryPhotoRaw = $quotation->signatory_photo;
         if (empty($signatoryPhotoRaw) && !empty($quotation->signatory_user_id)) {
@@ -577,6 +595,9 @@ class QuotationController extends Controller
             'pdf_header_logo' => $pdfHeaderLogo,
             'pdf_background_logo' => $pdfBackgroundLogo,
             'pdf_dotted_background' => $pdfDottedBackground,
+            'pdf_phone_icon' => $pdfPhoneIcon,
+            'pdf_email_icon' => $pdfEmailIcon,
+            'pdf_location_icon' => $pdfLocationIcon,
 
             // Signatory snapshot
             'signatory_name' => $quotation->signatory_name,
@@ -610,6 +631,9 @@ class QuotationController extends Controller
             'header_logo_kb' => $this->fileSizeInKb($pdfHeaderLogo),
             'background_logo_kb' => $this->fileSizeInKb($pdfBackgroundLogo),
             'dotted_background_kb' => $this->fileSizeInKb($pdfDottedBackground),
+            'phone_icon_kb' => $this->fileSizeInKb($pdfPhoneIcon),
+            'email_icon_kb' => $this->fileSizeInKb($pdfEmailIcon),
+            'location_icon_kb' => $this->fileSizeInKb($pdfLocationIcon),
             'company_logo_kb' => $this->fileSizeInKb($companyLogo),
             'signatory_photo_kb' => $this->fileSizeInKb($signatoryPhoto),
             'timings_ms' => $timings,
@@ -730,6 +754,55 @@ class QuotationController extends Controller
             imagejpeg($targetImage, $cachedPath, $jpegQuality);
         }
 
+        imagedestroy($sourceImage);
+        imagedestroy($targetImage);
+
+        return is_file($cachedPath) ? $cachedPath : $path;
+    }
+
+    private function makeIconWhiteForPdf(?string $path, string $cacheKey): ?string
+    {
+        if (!$path || !is_file($path)) {
+            return null;
+        }
+
+        $imageInfo = @getimagesize($path);
+        if (!$imageInfo) {
+            return $path;
+        }
+
+        [$width, $height] = $imageInfo;
+        $cacheDir = storage_path('app/pdf-image-cache');
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        $cachedPath = $cacheDir . DIRECTORY_SEPARATOR . sha1($cacheKey . '|' . $path . '|' . filemtime($path)) . '.png';
+        if (is_file($cachedPath)) {
+            return $cachedPath;
+        }
+
+        $sourceImage = @imagecreatefromstring(file_get_contents($path));
+        if (!$sourceImage) {
+            return $path;
+        }
+
+        $targetImage = imagecreatetruecolor($width, $height);
+        imagealphablending($targetImage, false);
+        imagesavealpha($targetImage, true);
+        $transparent = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
+        imagefilledrectangle($targetImage, 0, 0, $width, $height, $transparent);
+
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                $rgba = imagecolorat($sourceImage, $x, $y);
+                $alpha = ($rgba >> 24) & 0x7F;
+                $color = imagecolorallocatealpha($targetImage, 255, 255, 255, $alpha);
+                imagesetpixel($targetImage, $x, $y, $color);
+            }
+        }
+
+        imagepng($targetImage, $cachedPath, 7);
         imagedestroy($sourceImage);
         imagedestroy($targetImage);
 

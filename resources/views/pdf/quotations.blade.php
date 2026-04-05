@@ -14,7 +14,7 @@
         }
 
         body {
-            /* font-family: Arial, sans-serif; */
+            font-family: Arial, sans-serif;
         }
 
         .container {
@@ -142,12 +142,21 @@
             margin-bottom: 6px;
         }
 
-        .contact-label {
+        .icon-box {
             display: table-cell;
-            width: 70px;
-            font-weight: 600;
-            color: #1c0770;
+            width: 30px;
             vertical-align: middle;
+            text-align: center;
+            background: #1c0770;
+            border: 2px solid #808080;
+            border-radius: 50%;
+            height: 30px;
+        }
+
+        .icon-box img {
+            width: 12px;
+            height: 12px;
+            margin-top: 7px;
         }
 
         .text {
@@ -317,7 +326,6 @@
 
 <body>
     <section class="container">
-
         <header>
             <div class="logo-left">
                 <div class="circle-border">
@@ -332,7 +340,7 @@
             </div>
         </header>
 
-        <main class="" style="width: 85%; margin: 0 auto; position: relative;">
+        <main style="width: 85%; margin: 0 auto; position: relative;">
             @if (!empty($pdf_background_logo) || !empty($pdf_dotted_background))
                 <div class="bg-wrapper">
                     @if (!empty($pdf_background_logo) && file_exists($pdf_background_logo))
@@ -343,7 +351,7 @@
                     @endif
                 </div>
             @endif
-            <div class="container" style="position: relative; z-index: 1;">
+            <div class="container">
                 <!-- Reference and Date -->
                 <div class="reference">
                     <div style="text-align: right;">
@@ -396,6 +404,7 @@
                             <th class="product-description">DESCRIPTION OF GOODS</th>
                             {{-- <th class="product-photo">PHOTO</th> --}}
                             <th class="quantity">QTY.</th>
+                            <th class="unit">UNIT</th>
                             <th class="unit-price">UNIT PRICE</th>
                             <th class="discount">Dis.(%)</th>
                             <th class="total-price">TOTAL PRICE</th>
@@ -415,6 +424,7 @@
                                     @endif
                                 </td>
                                 <td class="quantity">{{ number_format($item->quantity) }}</td>
+                                <td class="unit">{{ $item->product?->unit ?? 'N/A' }}</td>
                                 <td class="unit-price">{{ number_format($item->unit_price, 2) }}</td>
                                 <td class="discount">{{ number_format($item->discount_percent ?? 0, 2) }}%</td>
                                 <td class="total-price">{{ number_format($item->total, 2) }}</td>
@@ -446,31 +456,31 @@
 
                         <!-- Total Rows -->
                         <tr class="total-row summary-row">
-                            <td colspan="6">GROSS TOTAL (BDT)</td>
+                            <td colspan="7">GROSS TOTAL (BDT)</td>
                             <td class="total-price">{{ number_format($subTotal, 2) }}</td>
                         </tr>
                         @if ($discountPercent > 0)
                             <tr class="total-row summary-row">
-                                <td colspan="6">SPECIAL DISCOUNT
+                                <td colspan="7">SPECIAL DISCOUNT
                                     ({{ rtrim(rtrim(number_format($discountPercent, 2), '0'), '.') }}%) (BDT)</td>
                                 <td class="total-price">{{ number_format($discountAmount, 2) }}</td>
                             </tr>
                         @endif
                         @if ($roundOff > 0)
                             <tr class="total-row summary-row">
-                                <td colspan="6">ROUND OFF - (BDT)</td>
+                                <td colspan="7">ROUND OFF - (BDT)</td>
                                 <td class="total-price">{{ number_format($roundOff, 2) }}</td>
                             </tr>
                         @endif
                         @if ($installationCharge > 0)
                             <tr class="total-row summary-row">
-                                <td colspan="6">INSTALLATION CHARGE (BDT)</td>
+                                <td colspan="7">INSTALLATION CHARGE (BDT)</td>
                                 <td class="total-price">{{ number_format($installationCharge, 2) }}</td>
                             </tr>
                         @endif
                         @if ($vatAmount > 0)
                             <tr class="total-row summary-row">
-                                <td colspan="6">VAT ({{ rtrim(rtrim(number_format($vatPercent, 2), '0'), '.') }}%)
+                                <td colspan="7">VAT ({{ rtrim(rtrim(number_format($vatPercent, 2), '0'), '.') }}%)
                                     (BDT)
                                 </td>
                                 <td class="total-price">{{ number_format($vatAmount, 2) }}</td>
@@ -478,7 +488,7 @@
                         @endif
                         @if ($taxAmount > 0)
                             <tr class="total-row summary-row">
-                                <td colspan="6">AIT ({{ rtrim(rtrim(number_format($taxPercent, 2), '0'), '.') }}%)
+                                <td colspan="7">AIT ({{ rtrim(rtrim(number_format($taxPercent, 2), '0'), '.') }}%)
                                     (BDT)
                                 </td>
                                 <td class="total-price">{{ number_format($taxAmount, 2) }}</td>
@@ -486,7 +496,7 @@
                         @endif
 
                         <tr class="total-row summary-final">
-                            <td colspan="6">GRAND TOTAL (BDT)</td>
+                            <td colspan="7">GRAND TOTAL (BDT)</td>
                             <td class="total-price">{{ number_format($quotation->total_amount, 2) }}</td>
                         </tr>
                     </tbody>
@@ -542,7 +552,6 @@
 
             </div>
         </main>
-
         <footer>
             <div class="footer-line">
                 <div class="line-small"></div>
@@ -552,17 +561,29 @@
 
             <div class="contact">
                 <div class="contact-item">
-                    <div class="contact-label">Phone</div>
+                    <div class="icon-box">
+                        @if (!empty($pdf_phone_icon) && file_exists($pdf_phone_icon))
+                            <img src="{{ $pdf_phone_icon }}" alt="" />
+                        @endif
+                    </div>
                     <p class="text">+880172837468763, +88016398473984</p>
                 </div>
 
                 <div class="contact-item">
-                    <div class="contact-label">Email</div>
+                    <div class="icon-box">
+                        @if (!empty($pdf_email_icon) && file_exists($pdf_email_icon))
+                            <img src="{{ $pdf_email_icon }}" alt="" />
+                        @endif
+                    </div>
                     <p class="text">info@packardbd.com</p>
                 </div>
 
                 <div class="contact-item">
-                    <div class="contact-label">Address</div>
+                    <div class="icon-box">
+                        @if (!empty($pdf_location_icon) && file_exists($pdf_location_icon))
+                            <img src="{{ $pdf_location_icon }}" alt="" />
+                        @endif
+                    </div>
                     <p class="text">Purana Paltan, Dhaka, Bangladesh</p>
                 </div>
             </div>
