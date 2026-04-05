@@ -259,10 +259,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
+                        {{-- <div class="col-12">
                             <label class="form-label">Additional Enclosed</label>
                             <textarea name="additional_enclosed" class="form-control" rows="2">{{ old('additional_enclosed') }}</textarea>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

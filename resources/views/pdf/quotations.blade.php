@@ -523,25 +523,25 @@
                 @endif
 
                 <!-- Closing -->
-                <div class="closing">
+                {{-- <div class="closing">
                     <p> We assure you that we provide our best service at all
                         times.</p>
                     <p>Thank you once again.</p>
-                </div>
+                </div> --}}
 
                 <!-- Signature Section -->
                 <div class="signature-section">
                     <div class="signature-content">
-                        {{-- @if (!empty($signatory_photo))
+                        @if (!empty($signatory_photo) && file_exists($signatory_photo))
                             <p style="margin: 0 0 6px 0;">
                                 <img src="{{ $signatory_photo }}" alt="Digital Signature"
                                     style="max-height: 70px; max-width: 180px;">
                             </p>
-                        @endif --}}
+                        @endif
                         <div class="signature-line"></div>
                         <p><strong>{{ $signatory_name ?? 'N/A' }}</strong></p>
                         <p>{{ $signatory_designation ?? 'N/A' }}</p>
-                        <p>For, <strong>{{ $company_name ?? 'N/A' }}</strong></p>
+                        <p><strong>{{ $company_name ?? 'N/A' }}</strong></p>
 
 
                     </div>

@@ -501,7 +501,7 @@ class QuotationController extends Controller
         $quotation->load(['client', 'items.product']);
         $amount_in_words = $this->convertNumberToWords($quotation->total_amount) . ' Taka Only';
         $pdf = PDF::loadView('pdf.quotations', compact('quotation'));
-        return $pdf->download('quotation-' . $quotation->quotation_number . '.pdf');
+        return $pdf->download($quotation->quotation_number . '.pdf');
 
     }
 
@@ -641,7 +641,7 @@ class QuotationController extends Controller
 
         return response($pdfBinary, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="quotation-' . $quotation->quotation_number . '.pdf"',
+            'Content-Disposition' => 'attachment; filename="' . $quotation->quotation_number . '.pdf"',
             'X-Quotation-Pdf-Timing' => json_encode($timings),
         ]);
     }
