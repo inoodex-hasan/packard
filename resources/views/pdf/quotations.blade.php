@@ -381,10 +381,8 @@
                 </tr>
                 @if ($discountPercent > 0)
                     <tr class="total-row summary-row">
-                        <td colspan="6">SPECIAL DISCOUNT @if ($discountPercent > 0)
-                                ({{ rtrim(rtrim(number_format($discountPercent, 2), '0'), '.') }}% BDT)
-                            @endif (BDT)
-                        </td>
+                        <td colspan="6">SPECIAL DISCOUNT
+                            ({{ rtrim(rtrim(number_format($discountPercent, 2), '0'), '.') }}%) (BDT)</td>
                         <td class="total-price">{{ number_format($discountAmount, 2) }}</td>
                     </tr>
                 @endif
@@ -402,18 +400,14 @@
                 @endif
                 @if ($vatAmount > 0)
                     <tr class="total-row summary-row">
-                        <td colspan="6">VAT @if ($vatPercent > 0)
-                                ({{ rtrim(rtrim(number_format($vatPercent, 2), '0'), '.') }}% (BDT))
-                            @endif (BDT)
+                        <td colspan="6">VAT ({{ rtrim(rtrim(number_format($vatPercent, 2), '0'), '.') }}%) (BDT)
                         </td>
                         <td class="total-price">{{ number_format($vatAmount, 2) }}</td>
                     </tr>
                 @endif
                 @if ($taxAmount > 0)
                     <tr class="total-row summary-row">
-                        <td colspan="6">AIT@if ($taxPercent > 0)
-                                ({{ rtrim(rtrim(number_format($taxPercent, 2), '0'), '.') }}% (BDT))
-                            @endif (BDT)
+                        <td colspan="6">AIT ({{ rtrim(rtrim(number_format($taxPercent, 2), '0'), '.') }}%) (BDT)
                         </td>
                         <td class="total-price">{{ number_format($taxAmount, 2) }}</td>
                     </tr>
