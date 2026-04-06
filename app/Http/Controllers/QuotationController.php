@@ -85,7 +85,7 @@ class QuotationController extends Controller
         'subject' => 'nullable|string|max:255',
         'company_name' => 'required|string|max:255',
         'signatory_user_id' => 'required|integer|exists:users,id',
-        'company_phone' => 'nullable|string|max:20',
+        'company_phone' => 'nullable|string|max:50',
         'company_email' => 'nullable|email|max:255',
         'company_website' => 'nullable|string|max:255',
         'company_address' => 'nullable|string',
@@ -316,7 +316,7 @@ class QuotationController extends Controller
             'subject' => 'nullable|string|max:255',
             'company_name' => 'required|string|max:255',
             'signatory_user_id' => 'required|integer|exists:users,id',
-            'company_phone' => 'nullable|string|max:20',
+            'company_phone' => 'nullable|string|max:50',
             'company_email' => 'nullable|email|max:255',
             'company_website' => 'nullable|string|max:255',
             'company_address' => 'nullable|string',
@@ -521,16 +521,8 @@ class QuotationController extends Controller
             'packard-header-logo',
             420
         );
-        $pdfBackgroundLogo = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/background.png'),
-            'packard-background-logo',
-            420
-        );
-        $pdfDottedBackground = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/dotted-background.jpg'),
-            'packard-dotted-background',
-            420
-        );
+        $pdfGreenShape = $this->resolvePublicFilePath('assets/invoice/assets/left_side.png');
+        $pdfBackgroundLogo = $this->resolvePublicFilePath('assets/invoice/assets/dotted-logo.png');
         $pdfPhoneIcon = $this->optimizeImageForPdf(
             public_path('assets/invoice/assets/telephone.png'),
             'packard-phone-icon',
@@ -594,7 +586,8 @@ class QuotationController extends Controller
             'company_logo' => $companyLogo,
             'pdf_header_logo' => $pdfHeaderLogo,
             'pdf_background_logo' => $pdfBackgroundLogo,
-            'pdf_dotted_background' => $pdfDottedBackground,
+            'pdf_green_shape' => $pdfGreenShape,
+            // 'pdf_dotted_background' => $pdfDottedBackground,
             'pdf_phone_icon' => $pdfPhoneIcon,
             'pdf_email_icon' => $pdfEmailIcon,
             'pdf_location_icon' => $pdfLocationIcon,
@@ -630,7 +623,8 @@ class QuotationController extends Controller
             'pdf_bytes' => strlen($pdfBinary),
             'header_logo_kb' => $this->fileSizeInKb($pdfHeaderLogo),
             'background_logo_kb' => $this->fileSizeInKb($pdfBackgroundLogo),
-            'dotted_background_kb' => $this->fileSizeInKb($pdfDottedBackground),
+            'green_shape_kb' => $this->fileSizeInKb($pdfGreenShape),
+            // 'dotted_background_kb' => $this->fileSizeInKb($pdfDottedBackground),
             'phone_icon_kb' => $this->fileSizeInKb($pdfPhoneIcon),
             'email_icon_kb' => $this->fileSizeInKb($pdfEmailIcon),
             'location_icon_kb' => $this->fileSizeInKb($pdfLocationIcon),
@@ -708,7 +702,9 @@ class QuotationController extends Controller
             return $path;
         }
 
-        $cacheHash = sha1($cacheKey . '|' . $path . '|' . filemtime($path) . '|' . $maxWidth . '|' . $jpegQuality);
+        $cacheHash = sha1(
+            $cacheKey . '|' . $path . '|' . filemtime($path) . '|' . filesize($path) . '|' . sha1_file($path) . '|' . $maxWidth . '|' . $jpegQuality
+        );
         $cachedPath = $cacheDir . DIRECTORY_SEPARATOR . $cacheHash . '.' . $extension;
         if (is_file($cachedPath)) {
             return $cachedPath;
@@ -777,7 +773,9 @@ class QuotationController extends Controller
             mkdir($cacheDir, 0755, true);
         }
 
-        $cachedPath = $cacheDir . DIRECTORY_SEPARATOR . sha1($cacheKey . '|' . $path . '|' . filemtime($path)) . '.png';
+        $cachedPath = $cacheDir . DIRECTORY_SEPARATOR . sha1(
+            $cacheKey . '|' . $path . '|' . filemtime($path) . '|' . filesize($path) . '|' . sha1_file($path)
+        ) . '.png';
         if (is_file($cachedPath)) {
             return $cachedPath;
         }

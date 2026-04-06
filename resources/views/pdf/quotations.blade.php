@@ -93,12 +93,26 @@
         }
 
         .logo-img {
-            width: 320px;
+            padding-left: 70px;
+            width: 250px;
+        }
+
+        .green-shape-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .green-shape-img {
+            width: 45px;
+            height: 1200px;
+
         }
 
         .bg-wrapper {
             position: absolute;
-            right: -150px;
+            right: -230px;
             top: 220px;
             width: 430px;
             /* overflow: hidden; */
@@ -107,18 +121,10 @@
 
         .bg-main {
             width: 100%;
-            opacity: 0.08;
+            opacity: 0.4;
         }
 
-        .bg-dotted {
-            position: absolute;
-            top: 80px;
-            right: 10px;
-            width: 320px;
-            scale: 10;
-            opacity: 0.08;
-            rotate: -90deg;
-        }
+
 
         footer {
             position: absolute;
@@ -135,27 +141,30 @@
 
         .line-small {
             display: table-cell;
-            width: 20px;
-            border-top: 2px solid #1c0770;
+            width: 30px;
             margin-left: 12px;
             vertical-align: middle;
+            border-bottom: 2px solid #1c0770;
+            height: 1px;
         }
 
         .footer-title {
             display: table-cell;
-            width: 220px;
+            width: 180px;
             font-weight: 600;
             color: #1c0770;
-            font-size: 18px;
+            font-size: 14px;
             padding-left: 10px;
             vertical-align: middle;
+            margin-top: 4px;
         }
 
         .line-full {
             display: table-cell;
             width: 100%;
-            border-top: 2px solid #1c0770;
             vertical-align: middle;
+            border-bottom: 2px solid #1c0770;
+            height: 1px;
         }
 
         .contact {
@@ -180,9 +189,9 @@
         }
 
         .icon-box img {
-            width: 12px;
-            height: 12px;
-            margin-top: 7px;
+            width: 10px;
+            height: 10px;
+            margin-top: 4px;
         }
 
         .text {
@@ -352,6 +361,11 @@
 
 <body>
     <section class="container">
+        <div class="green-shape-wrapper">
+            @if (!empty($pdf_green_shape) && file_exists($pdf_green_shape))
+                <img class="green-shape-img" src="{{ $pdf_green_shape }}" alt="green shape" />
+            @endif
+        </div>
         <header>
             <div class="logo-left">
                 <div class="circle-border">
@@ -367,14 +381,14 @@
         </header>
 
         <main style="width: 85%; margin: 0 auto; position: relative;">
-            @if (!empty($pdf_background_logo) || !empty($pdf_dotted_background))
+            @if (!empty($pdf_background_logo))
                 <div class="bg-wrapper">
                     @if (!empty($pdf_background_logo) && file_exists($pdf_background_logo))
                         <img class="bg-main" src="{{ $pdf_background_logo }}" alt="" />
                     @endif
-                    @if (!empty($pdf_dotted_background) && file_exists($pdf_dotted_background))
+                    {{-- @if (!empty($pdf_dotted_background) && file_exists($pdf_dotted_background))
                         <img class="bg-dotted" src="{{ $pdf_dotted_background }}" alt="" />
-                    @endif
+                    @endif --}}
                 </div>
             @endif
             <div class="container">
@@ -580,8 +594,8 @@
         </main>
         <footer>
             <div class="footer-line">
-                <div class="line-small"></div>
-                <h1 class="footer-title">Packard Engineering Ltd.</h1>
+                <div class="line-small "></div>
+                <h1 class="footer-title">{{ $company_name ?? 'N/A' }}</h1>
                 <div class="line-full"></div>
             </div>
 
@@ -592,7 +606,7 @@
                             <img src="{{ $pdf_phone_icon }}" alt="" />
                         @endif
                     </div>
-                    <p class="text">+880172837468763, +88016398473984</p>
+                    <p class="text">{{ $company_phone ?? 'N/A' }}</p>
                 </div>
 
                 <div class="contact-item">
@@ -601,7 +615,7 @@
                             <img src="{{ $pdf_email_icon }}" alt="" />
                         @endif
                     </div>
-                    <p class="text">info@packardbd.com</p>
+                    <p class="text">{{ $company_email ?? 'N/A' }}</p>
                 </div>
 
                 <div class="contact-item">
@@ -610,7 +624,7 @@
                             <img src="{{ $pdf_location_icon }}" alt="" />
                         @endif
                     </div>
-                    <p class="text">Purana Paltan, Dhaka, Bangladesh</p>
+                    <p class="text">{{ $company_address ?? 'N/A' }}</p>
                 </div>
             </div>
         </footer>
