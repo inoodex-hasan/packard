@@ -6,33 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Packard - Quotation</title>
     <style>
+
+       @font-face {
+    font-family: 'Century Gothic';
+    src: url("{{ public_path('fonts/centurygothic.ttf') }}") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+
         body {
-            font-family: 'Times New Roman', Times, serif !important;
+            font-family: 'Century Gothic', sans-serif;
+        }
+
+        /* body {
+             font-family: 'Century Gothic', sans-serif;
             font-size: 12px;
             line-height: 1.35;
             color: #000;
-        }
+        } */
 
-        body,
-        table,
-        th,
-        td,
-        div,
-        p,
-        span,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: 'Times New Roman', Times, serif !important;
+       body {
+            font-family: 'Century Gothic', sans-serif;
+            font-size: 12px;
+            line-height: 1.35;
+            color: #000;
         }
 
         @page {
@@ -109,10 +113,11 @@
         .site-title {
             font-size: 18px;
             color: #1c0770;
-            font-weight: 500;
+            /* font-weight: 500; */
             display: inline-block;
             vertical-align: middle;
             margin-left: 8px;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         /* Footer */
@@ -142,11 +147,12 @@
         .footer-title {
             display: table-cell;
             width: 210px;
-            font-weight: 600;
+            /* font-weight: 600; */
             color: #1c0770;
             font-size: 13px;
             padding-left: 10px;
             vertical-align: middle;
+                font-family: 'Century Gothic', Times, serif !important;
         }
 
         .line-full {
@@ -211,7 +217,7 @@
         /* Main Content */
         .content-wrapper {
             margin-left: 45px;
-            padding-top: 95px;
+            padding-top: 100px;
             padding-bottom: 155px;
             padding-left: 30px;
             padding-right: 30px;
@@ -223,6 +229,7 @@
             text-align: right;
             margin-bottom: 20px;
             font-size: 12px;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         .to-section p {
@@ -231,7 +238,8 @@
 
         .subject {
             margin: 15px 0;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         .letter-body {
@@ -246,21 +254,25 @@
         /* Quotation Table */
         .quotation-title {
             text-align: center;
-            font-weight: bold;
+            /* font-weight: bold; */
             text-decoration: underline;
             margin: 20px 0 15px 0;
             font-size: 14px;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         table {
             border-collapse: collapse;
             width: 100%;
             font-size: 11px;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         .quotation-table {
             margin-bottom: 16px;
             page-break-inside: auto;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .quotation-table tr {
@@ -277,27 +289,34 @@
             padding: 6px 8px;
             text-align: center;
             background-color: #f0f0f0;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         tbody td {
             border: 1px solid #000;
             padding: 6px 8px;
             vertical-align: middle;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         .serial {
             width: 5%;
             text-align: center;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .model {
             width: 12%;
             text-align: center;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .product-description {
             width: 38%;
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         .quantity,
@@ -306,22 +325,28 @@
         .total-price {
             width: 9%;
             text-align: center;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .unit {
             width: 7%;
             text-align: center;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .total-row td {
             padding-right: 16px;
             text-align: right;
-            font-weight: 600;
+            /* font-weight: 600; */
+                font-family: 'Century Gothic', Times, serif !important;
         }
 
         .summary-final td {
             font-size: 12px;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         /* Amount in Words */
@@ -332,8 +357,9 @@
             border: 1px solid #ddd;
             font-style: italic;
             text-align: center;
-            font-weight: bold;
+            /* font-weight: bold; */
             page-break-inside: avoid;
+             font-family: 'Century Gothic', Times, serif !important;
         }
 
         /* .amount-words-row td {
@@ -348,11 +374,12 @@
         /* Terms & Conditions */
         .terms-title {
             text-align: center;
-            font-weight: bold;
+            /* font-weight: bold; */
             text-decoration: underline;
             margin: 20px 0 10px 0;
             font-size: 13px;
             page-break-inside: avoid;
+             font-family: 'Century Gothic', Times, serif !important;
         }
 
         .terms-table {
@@ -368,23 +395,31 @@
 
         .terms-table td:first-child {
             width: 30px;
-            font-weight: bold;
+            /* font-weight: bold; */
+            font-family: 'Century Gothic', Times, serif !important;
         }
 
         /* Signature */
         .signature-section {
             margin-top: 60px;
             page-break-inside: avoid;
+                        font-family: 'Century Gothic', Times, serif !important;
+
+            
         }
 
         .signature-content {
             width: 280px;
+                        font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .signature-line {
             border-top: 1px dashed #000;
             width: 200px;
             margin: 35px 0 8px 0;
+            font-family: 'Century Gothic', Times, serif !important;
+
         }
 
         .post-table-section {
@@ -394,7 +429,15 @@
         .post-table-page-break {
             page-break-before: always;
             margin-top: 0;
-            padding-top: 12px;
+            padding-top: 18px;
+        }
+
+        .post-table-page-break .amount-in-words {
+            margin-top: 0;
+        }
+
+        .post-table-page-break .terms-title {
+            margin-top: 0;
         }
     </style>
 </head>
@@ -479,8 +522,8 @@
                 ? $quotation->items->values()
                 : collect($quotation->items)->values();
 
-        $firstPageLimit = 8;
-        $overflowPageLimit = 15;
+        $firstPageLimit = 4;
+        $overflowPageLimit = 10;
 
         $itemPages = [];
         $serial = 1;
@@ -519,8 +562,7 @@
             ];
         }
 
-        $lastItemPage = $itemPages[count($itemPages) - 1] ?? ['items' => collect()];
-        $forcePostTablePageBreak = $lastItemPage['items']->count() >= 8;
+        $forcePostTablePageBreak = true;
     @endphp
 
     @foreach ($itemPages as $pageIndex => $pageData)
@@ -529,7 +571,7 @@
             @if ($pageIndex === 0)
                 {{-- Reference & Date - Fixed --}}
                 <div class="reference">
-                    <div><strong>Ref:</strong> {{ $quotation->quotation_number ?? 'N/A' }}</div>
+                    <div>Ref: {{ $quotation->quotation_number ?? 'N/A' }}</div>
                     <div>{{ $quotation->quotation_date?->format('F d, Y') ?? 'N/A' }}</div>
                 </div>
 
@@ -589,7 +631,7 @@
                             <td class="model">{{ $item->product?->product_code ?? 'N/A' }}</td>
                             <td class="product-description">
                                 @if ($item->product)
-                                    <strong>{{ $item->product->name }}</strong>
+                                    {{ $item->product->name }}
                                     @if ($item->product->details)
                                         <br><small style="color: #666;">{{ $item->product->details }}</small>
                                     @endif
@@ -693,9 +735,9 @@
                                 </p>
                             @endif
                             <div class="signature-line"></div>
-                            <p><strong>{{ $signatory_name ?? 'N/A' }}</strong></p>
+                            <p>{{ $signatory_name ?? 'N/A' }}</p>
                             <p>{{ $signatory_designation ?? 'N/A' }}</p>
-                            <p><strong>{{ $company_name ?? 'N/A' }}</strong></p>
+                            <p>{{ $company_name ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>

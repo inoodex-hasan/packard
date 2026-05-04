@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 06, 2026 at 01:17 PM
+-- Generation Time: Apr 07, 2026 at 04:21 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.26
 
@@ -352,9 +352,7 @@ CREATE TABLE `quotations` (
 --
 
 INSERT INTO `quotations` (`id`, `quotation_number`, `client_id`, `quotation_date`, `expiry_date`, `notes`, `sub_total`, `discount_percent`, `discount_amount`, `vat_percent`, `vat_amount`, `tax_percent`, `tax_amount`, `installation_charge`, `round_off`, `total_amount`, `status`, `created_at`, `updated_at`, `client_name`, `client_designation`, `client_address`, `client_phone`, `client_email`, `attention_to`, `body_content`, `terms_conditions`, `subject`, `company_name`, `logo`, `signatory_name`, `signatory_designation`, `signatory_photo`, `company_phone`, `company_email`, `company_website`, `company_address`, `additional_enclosed`, `deleted_at`) VALUES
-(14, '0001-ryans', 1, '2026-04-06', '2026-04-21', 'Quotation for Your Requirement', 40927.50, 2.00, 818.55, 1.50, 601.63, 0.00, 0.00, 0.00, 80.00, 40630.58, 'draft', '2026-04-05 10:45:55', '2026-04-06 13:12:16', 'Ryans Computers', 'Manager', 'Dhaka', '01256423001', 'ryans@gmail.com', 'Mr. Kamal', 'Dear Sir/Madam,\r\n\r\nThank you for your inquiry.\r\n\r\nPlease find attached our quotation based on your requirements. The pricing, scope, and terms are outlined for your review. If you need any modifications or have specific questions, feel free to let us know.\r\n\r\nWe look forward to your feedback and the opportunity to work with you.\r\n\r\nBest regards,\r\nPackard Engineering Ltd', 'Delivery timeline will be confirmed after order confirmation.\r\n Prices are in BDT.\r\n VAT/TAX are not included unless mentioned.\r\n Payment terms: As per mutual agreement.', 'Quotation for Your Requirement', 'Packard Engineering Ltd.', 'uploads/company_details/1775385303_logo.png', 'Mr. Karim', 'Sales Person', 'frontend/users/20260224122504_SrA86C5rqb.png', '+880172837468763, +88016398473984', 'info@packardbd.com', 'https://www.packardbd.com/', 'Purana Paltan, Dhaka, Bangladesh', NULL, NULL),
-(15, '0001-md', 7, '2026-04-06', '2026-04-21', 'Quotation No. 01', 8910.00, 2.00, 178.20, 2.50, 218.30, 1.50, 130.98, 500.00, 0.00, 9581.07, 'draft', '2026-04-06 06:59:52', '2026-04-06 07:07:08', 'Md Hasan', 'Manager', 'Dhaka', '01000000000', 'hasan@inoodex.com', 'Hasan', 'Test', 'Delivery timeline will be confirmed after order confirmation.\r\n Prices are in BDT.\r\n VAT/TAX are not included unless mentioned.\r\n Payment terms: As per mutual agreement.', 'Quotation No. 01', 'Inoodex', 'uploads/company_details/1775385303_logo.png', 'Mr. Karim', 'Sales Person', 'frontend/users/20260224122504_SrA86C5rqb.png', '012000000', 'hello@inoodex.com', 'https://www.inoodex.com/', 'Mirpur, Pallabi, Dhaka', NULL, '2026-04-06 07:07:08'),
-(16, '0002-ryans', 1, '2026-04-06', '2026-04-21', 'Quotation No. 02', 6860.00, 1.00, 68.60, 2.50, 169.79, 1.50, 101.87, 0.00, 0.00, 7063.06, 'draft', '2026-04-06 08:44:28', '2026-04-06 08:44:28', 'Ryans Computers', 'Manager', 'Dhaka', '01256423001', 'ryans@gmail.com', 'Mr. Kamal', 'Test', 'Delivery timeline will be confirmed after order confirmation.\r\n VAT/TAX are not included unless mentioned.', 'Quotation No. 02', 'Packard Engineering Ltd.', 'uploads/company_details/1775385303_logo.png', 'Mr. Karim', 'Sales Person', 'frontend/users/20260224122504_SrA86C5rqb.png', '+880172837468763, +88016398473984', 'info@packardbd.com', 'https://www.packardbd.com/', 'Purana Paltan, Dhaka, Bangladesh', NULL, NULL);
+(14, '0001-ryans', 1, '2026-04-07', '2026-04-22', 'Quotation for Your Requirement', 40927.50, 2.00, 818.55, 1.50, 601.63, 2.50, 1002.72, 0.00, 0.00, 41713.31, 'draft', '2026-04-05 10:45:55', '2026-04-07 03:55:42', 'Ryans Computers', 'Manager', 'Dhaka', '01256423001', 'ryans@gmail.com', 'Mr. Kamal', 'Dear Sir/Madam,\r\n\r\nThank you for your inquiry.\r\n\r\nPlease find attached our quotation based on your requirements. The pricing, scope, and terms are outlined for your review. If you need any modifications or have specific questions, feel free to let us know.\r\n\r\nWe look forward to your feedback and the opportunity to work with you.\r\n\r\nBest regards,\r\nPackard Engineering Ltd', 'Delivery timeline will be confirmed after order confirmation.\r\n Prices are in BDT.\r\n VAT/TAX are not included unless mentioned.\r\n Payment terms: As per mutual agreement.', 'Quotation for Your Requirement', 'Packard Engineering Ltd.', 'uploads/company_details/1775385303_logo.png', 'Mr. Karim', 'Sales Person', 'frontend/users/20260224122504_SrA86C5rqb.png', '+880172837468763, +88016398473984', 'info@packardbd.com', 'https://www.packardbd.com/', 'Purana Paltan, Dhaka, Bangladesh', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -380,28 +378,26 @@ CREATE TABLE `quotation_items` (
 --
 
 INSERT INTO `quotation_items` (`id`, `quotation_id`, `product_id`, `description`, `quantity`, `unit_price`, `discount_percent`, `total`, `created_at`, `updated_at`) VALUES
-(25, 15, 2, 'description not available', 1, 9000.00, 1.00, 8910.00, '2026-04-06 06:59:53', '2026-04-06 06:59:53'),
-(28, 16, 1, 'Test', 1, 7000.00, 2.00, 6860.00, '2026-04-06 08:44:28', '2026-04-06 08:44:28'),
-(99, 14, 2, 'description not available', 1, 9000.00, 0.00, 9000.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(100, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(101, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(102, 14, 4, 'Durable and lightweight', 1, 75.00, 0.00, 75.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(103, 14, 5, 'Eco-friendly packaging', 1, 150.00, 0.00, 150.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(104, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(105, 14, 19, 'High durability', 1, 160.00, 0.00, 160.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(106, 14, 20, 'Compact & lightweight', 1, 100.50, 0.00, 100.50, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(107, 14, 17, 'Scratch-resistant', 1, 120.00, 0.00, 120.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(108, 14, 14, 'Quick assembly', 1, 85.00, 0.00, 85.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(109, 14, 11, 'Energy-efficient', 1, 180.00, 0.00, 180.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(110, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(111, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(112, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(113, 14, 2, 'description not available', 1, 9000.00, 0.00, 9000.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(114, 14, 13, 'Premium finish', 1, 130.00, 0.00, 130.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(115, 14, 18, 'Multipack available', 1, 220.00, 0.00, 220.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(116, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(117, 14, 4, 'Durable and lightweight', 1, 75.00, 0.00, 75.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16'),
-(118, 14, 5, 'Eco-friendly packaging', 1, 150.00, 0.00, 150.00, '2026-04-06 13:12:16', '2026-04-06 13:12:16');
+(119, 14, 2, 'description not available', 1, 9000.00, 0.00, 9000.00, '2026-04-07 03:55:42', '2026-04-07 03:55:42'),
+(120, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(121, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(122, 14, 4, 'Durable and lightweight', 1, 75.00, 0.00, 75.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(123, 14, 5, 'Eco-friendly packaging', 1, 150.00, 0.00, 150.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(124, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(125, 14, 19, 'High durability', 1, 160.00, 0.00, 160.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(126, 14, 20, 'Compact & lightweight', 1, 100.50, 0.00, 100.50, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(127, 14, 17, 'Scratch-resistant', 1, 120.00, 0.00, 120.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(128, 14, 14, 'Quick assembly', 1, 85.00, 0.00, 85.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(129, 14, 11, 'Energy-efficient', 1, 180.00, 0.00, 180.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(130, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(131, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(132, 14, 1, 'Test', 1, 7000.00, 0.00, 7000.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(133, 14, 2, 'description not available', 1, 9000.00, 0.00, 9000.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(134, 14, 13, 'Premium finish', 1, 130.00, 0.00, 130.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(135, 14, 18, 'Multipack available', 1, 220.00, 0.00, 220.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(136, 14, 3, 'High-quality material', 1, 120.50, 0.00, 120.50, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(137, 14, 4, 'Durable and lightweight', 1, 75.00, 0.00, 75.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43'),
+(138, 14, 5, 'Eco-friendly packaging', 1, 150.00, 0.00, 150.00, '2026-04-07 03:55:43', '2026-04-07 03:55:43');
 
 -- --------------------------------------------------------
 
@@ -654,7 +650,7 @@ ALTER TABLE `quotations`
 -- AUTO_INCREMENT for table `quotation_items`
 --
 ALTER TABLE `quotation_items`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- AUTO_INCREMENT for table `roles`

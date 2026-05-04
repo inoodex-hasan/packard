@@ -6,7 +6,7 @@ return [
     'is_font_subsetting_enabled' => true,
     'log_output_file' => storage_path('logs/dompdf.log'),
     'default_paper_size' => 'a4',
-    'default_font' => 'dejavu sans',
+    'default_font' => 'Century Gothic',
 ];
 
  
