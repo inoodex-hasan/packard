@@ -510,33 +510,12 @@ class QuotationController extends Controller
 
         $amount_in_words = $this->convertNumberToWords($quotation->total_amount) . ' Taka Only';
 
-        $defaultCompany = CompanyDetail::where('is_default', true)->first();
-        $companyLogo = $this->resolvePublicFilePath($quotation->logo ?: ($defaultCompany->photo ?? null));
-        $pdfHeaderLogo = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/logo.png'),
-            'packard-header-logo',
-            420
+        $pdfBackgroundImage = $this->optimizeImageForPdf(
+            public_path('frontend/packard_bg.png'),
+            'packard-background',
+            2000,
+            95
         );
-        $pdfGreenShape = $this->resolvePublicFilePath('assets/invoice/assets/left_side.png');
-        $pdfBackgroundLogo = $this->resolvePublicFilePath('assets/invoice/assets/dotted-logo.png');
-        $pdfPhoneIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/telephone.png'),
-            'packard-phone-icon',
-            24
-        );
-        $pdfPhoneIcon = $this->makeIconWhiteForPdf($pdfPhoneIcon, 'packard-phone-icon-white');
-        $pdfEmailIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/email.png'),
-            'packard-email-icon',
-            24
-        );
-        $pdfEmailIcon = $this->makeIconWhiteForPdf($pdfEmailIcon, 'packard-email-icon-white');
-        $pdfLocationIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/location.png'),
-            'packard-location-icon',
-            24
-        );
-        $pdfLocationIcon = $this->makeIconWhiteForPdf($pdfLocationIcon, 'packard-location-icon-white');
 
         $signatoryPhotoRaw = $quotation->signatory_photo;
         if (empty($signatoryPhotoRaw) && !empty($quotation->signatory_user_id)) {
@@ -578,13 +557,9 @@ class QuotationController extends Controller
             'company_email' => $quotation->company_email,
             'company_website' => $quotation->company_website,
             'company_address' => $quotation->company_address,
-            'company_logo' => $companyLogo,
-            'pdf_header_logo' => $pdfHeaderLogo,
-            'pdf_background_logo' => $pdfBackgroundLogo,
-            'pdf_green_shape' => $pdfGreenShape,
-            'pdf_phone_icon' => $pdfPhoneIcon,
-            'pdf_email_icon' => $pdfEmailIcon,
-            'pdf_location_icon' => $pdfLocationIcon,
+
+            // Background image
+            'pdf_background_image' => $pdfBackgroundImage,
 
             // Signatory snapshot
             'signatory_name' => $quotation->signatory_name,
@@ -744,33 +719,13 @@ class QuotationController extends Controller
 
         $amount_in_words = $this->convertNumberToWords($quotation->total_amount) . ' Taka Only';
 
-        $defaultCompany = CompanyDetail::where('is_default', true)->first();
-        $companyLogo = $this->resolvePublicFilePath($quotation->logo ?: ($defaultCompany->photo ?? null));
-        $pdfHeaderLogo = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/logo.png'),
-            'packard-header-logo',
-            420
+        $pdfBackgroundImage = $this->optimizeImageForPdf(
+            public_path('frontend/packard_bg.png'),
+            'packard-background',
+            2000,
+            95
         );
-        $pdfGreenShape = $this->resolvePublicFilePath('assets/invoice/assets/left_side.png');
-        $pdfBackgroundLogo = $this->resolvePublicFilePath('assets/invoice/assets/dotted-logo.png');
-        $pdfPhoneIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/telephone.png'),
-            'packard-phone-icon',
-            24
-        );
-        $pdfPhoneIcon = $this->makeIconWhiteForPdf($pdfPhoneIcon, 'packard-phone-icon-white');
-        $pdfEmailIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/email.png'),
-            'packard-email-icon',
-            24
-        );
-        $pdfEmailIcon = $this->makeIconWhiteForPdf($pdfEmailIcon, 'packard-email-icon-white');
-        $pdfLocationIcon = $this->optimizeImageForPdf(
-            public_path('assets/invoice/assets/location.png'),
-            'packard-location-icon',
-            24
-        );
-        $pdfLocationIcon = $this->makeIconWhiteForPdf($pdfLocationIcon, 'packard-location-icon-white');
+        $assetsResolvedAt = hrtime(true);
 
         $signatoryPhotoRaw = $quotation->signatory_photo;
         if (empty($signatoryPhotoRaw) && !empty($quotation->signatory_user_id)) {
@@ -788,7 +743,6 @@ class QuotationController extends Controller
         }
 
         $signatoryPhoto = $this->resolvePublicFilePath($signatoryPhotoRaw);
-        $assetsResolvedAt = hrtime(true);
 
         $data = [
             'quotation' => $quotation,
@@ -813,14 +767,9 @@ class QuotationController extends Controller
             'company_email' => $quotation->company_email,
             'company_website' => $quotation->company_website,
             'company_address' => $quotation->company_address,
-            'company_logo' => $companyLogo,
-            'pdf_header_logo' => $pdfHeaderLogo,
-            'pdf_background_logo' => $pdfBackgroundLogo,
-            'pdf_green_shape' => $pdfGreenShape,
-            // 'pdf_dotted_background' => $pdfDottedBackground,
-            'pdf_phone_icon' => $pdfPhoneIcon,
-            'pdf_email_icon' => $pdfEmailIcon,
-            'pdf_location_icon' => $pdfLocationIcon,
+
+            // Background image
+            'pdf_background_image' => $pdfBackgroundImage,
 
             // Signatory snapshot
             'signatory_name' => $quotation->signatory_name,
@@ -833,7 +782,6 @@ class QuotationController extends Controller
         $html = view('pdf.quotations', $data)->render();
         $viewRenderedAt = hrtime(true);
 
-        // $pdf = Pdf::loadHTML($html);
         $pdf = Pdf::loadHTML($html)
             ->setOption('isPhpEnabled', true)
             ->setOption('isHtml5ParserEnabled', true)
@@ -842,7 +790,6 @@ class QuotationController extends Controller
 
         $pdfBinary = $pdf->output();
         $pdfRenderedAt = hrtime(true);
-
 
         $timings = [
             'load_ms' => round(($loadedAt - $startedAt) / 1_000_000, 2),
@@ -858,19 +805,10 @@ class QuotationController extends Controller
             'items_count' => $quotation->items->count(),
             'html_bytes' => strlen($html),
             'pdf_bytes' => strlen($pdfBinary),
-            'header_logo_kb' => $this->fileSizeInKb($pdfHeaderLogo),
-            'background_logo_kb' => $this->fileSizeInKb($pdfBackgroundLogo),
-            'green_shape_kb' => $this->fileSizeInKb($pdfGreenShape),
-            // 'dotted_background_kb' => $this->fileSizeInKb($pdfDottedBackground),
-            'phone_icon_kb' => $this->fileSizeInKb($pdfPhoneIcon),
-            'email_icon_kb' => $this->fileSizeInKb($pdfEmailIcon),
-            'location_icon_kb' => $this->fileSizeInKb($pdfLocationIcon),
-            'company_logo_kb' => $this->fileSizeInKb($companyLogo),
+            'background_image_kb' => $this->fileSizeInKb($pdfBackgroundImage),
             'signatory_photo_kb' => $this->fileSizeInKb($signatoryPhoto),
             'timings_ms' => $timings,
         ]);
-
-        // return response($html, 200, ['Content-Type' => 'text/html']);
 
         return response($pdfBinary, 200, [
             'Content-Type' => 'application/pdf',

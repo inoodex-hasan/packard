@@ -280,7 +280,7 @@
                                     <option value="{{ $product->id }}" data-name="{{ $product->name }}"
                                         data-description="{{ $product->details ?? 'description not available' }}"
                                         data-price="{{ $product->price ?? 0 }}">
-                                        {{ \Illuminate\Support\Str::limit($product->name, 40) }}
+                                        {{ $product->product_code }} - {{ \Illuminate\Support\Str::limit($product->name, 40) }}
                                     </option>
                                 @endforeach
                             </select>
