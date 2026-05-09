@@ -8,7 +8,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 140px -15px 105px 0;
+            margin: 140px 0 105px 0;
         }
     </style>
     <style>
@@ -65,14 +65,12 @@
             width: 100%;
             height: 297mm; /* Full A4 height to cover the whole page */
             z-index: -1;
-            text-align: center; /* Center the image horizontally if it overflows */
-            overflow: hidden;
         }
 
         .bg-image {
+            width: 100%;    
             height: 100%;
-            width: auto;
-            display: inline-block;
+            display: block;
         }
 
         /* Main Content */

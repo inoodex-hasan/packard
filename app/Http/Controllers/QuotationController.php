@@ -676,10 +676,10 @@ class QuotationController extends Controller
         $amount_in_words = $this->convertNumberToWords($quotation->total_amount) . ' Taka Only';
 
         $pdfBackgroundImage = $this->optimizeImageForPdf(
-            public_path('frontend/packard_bg_2.png'),
+            public_path('frontend/packard_bg_1.jpg'),
             'packard-background',
-            2000,
-            95
+            1748,
+            80
         );
 
         $signatoryPhotoRaw = $quotation->signatory_photo;
