@@ -547,7 +547,7 @@
                                 @foreach (explode("\n", $terms_conditions) as $index => $term)
                                     @if (trim($term))
                                         <tr>
-                                            <td>{{ $index + 1 }}.</td>
+                                            <td>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}.</td>
                                             <td>{{ trim($term) }}</td>
                                         </tr>
                                     @endif
