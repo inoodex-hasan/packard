@@ -31,7 +31,7 @@
         body {
             font-family: 'Century Gothic', sans-serif;
             font-size: 12px;
-            line-height: 1.35;
+            line-height: 1.0;
             color: #000;
             margin: 0;
             padding: 0;
@@ -94,7 +94,7 @@
         .header-content {
             display: table;
             width: 94%;
-            margin-bottom: 10pt;
+            /* margin-bottom: 10pt; */
             margin-top: 0;
             table-layout: fixed;
             margin-left: 24pt;
@@ -117,13 +117,16 @@
         }
 
         .to-section p {
-            margin: 0 0;
+            margin: 0 0 0 0;
+            padding: 0;
             font-weight: bold;
-            line-height: 1.1;
+            /* line-height: 1.0; */
         }
 
         .subject {
-            margin: 15pt 0;
+            display: block;
+            margin: 7px 0 0 0;
+            padding: 0;
             font-weight: bold;
             font-family: 'Century Gothic', Times, serif !important;
             width: 94%;
@@ -132,16 +135,19 @@
         }
 
         .letter-body {
-            margin: 15pt 0;
+            display: block;
+            margin: 7px 0 0 0;
+            padding: 0;
             text-align: justify;
-            line-height: 1.1;
+            line-height: 1.0;
             width: 94%;
             margin-left: 24pt;
             margin-right: 3%;
+            font-weight: bold;
         }
 
         .additional-enclosed {
-            margin: 15pt 0;
+            margin: 5pt 0;
             width: 94%;
             margin-left: 24pt;
             margin-right: 3%;
@@ -194,9 +200,10 @@
 
         tbody td {
             border: 1px solid #000;
-            padding: 6px 8px;
+            padding: 3px 6px;
             vertical-align: middle;
             font-family: 'Century Gothic', Times, serif !important;
+            line-height: 0.9;
         }
 
         .serial {
@@ -252,7 +259,7 @@
         .amount-in-words {
             width: 70%;
             margin: 0 auto;
-            padding: 10pt 12pt;
+            padding: 5pt 6pt;
             background: transparent;
             border: 1px solid #ddd;
             display: block;
@@ -263,14 +270,15 @@
         .signature-content p {
             margin: 0;
             line-height: 1.1;
+            font-weight: bold;
+
         }
 
         .signature-line {
             border-top: 1px dashed #000;
             width: 200px;
-            margin: 35px 0 8px 0;
+            margin: 20px 0 8px 0;
             font-family: 'Century Gothic', Times, serif !important;
-
         }
 
         .post-table-section {
@@ -398,8 +406,8 @@
                     <div class="header-content-right">
                         {{-- Reference & Date --}}
                         <div class="reference">
-                            <p>REF: {{ strtoupper($quotation->quotation_number ?? 'N/A') }}</p>
-                            <p>{{ $quotation->quotation_date?->format('F d, Y') ?? 'N/A' }}</p>
+                            <p>Date:{{ $quotation->quotation_date?->format('F d, Y') ?? 'N/A' }}</p>
+                            <p>Ref: {{ strtoupper($quotation->quotation_number ?? 'N/A') }}</p>
                         </div>
                     </div>
                 </div>
@@ -411,7 +419,7 @@
 
                 {{-- Letter Body --}}
                 <div class="letter-body">
-                    <p>{!! nl2br(e($body_content ?? '')) !!}</p>
+                    <p style="margin: 0; padding: 0;">{!! nl2br(e($body_content ?? '')) !!}</p>
                 </div>
 
                 {{-- Additional Enclosed --}}
@@ -443,7 +451,7 @@
                 <tbody>
                     @foreach ($pageData['items'] as $rowIndex => $item)
                         <tr>
-                            <td class="serial">{{ $pageData['serial_start'] + $rowIndex }}</td>
+                            <td class="serial">{{ str_pad($pageData['serial_start'] + $rowIndex, 2, '0', STR_PAD_LEFT) }}</td>
                             <td class="model">{{ $item->product?->product_code ?? 'N/A' }}</td>
                             <td class="product-description">
                                 @if ($item->product)
@@ -453,7 +461,7 @@
                                     @endif
                                 @endif
                             </td>
-                            <td class="quantity">{{ number_format($item->quantity) }}</td>
+                            <td class="quantity">{{ str_pad(number_format($item->quantity), 2, '0', STR_PAD_LEFT) }}</td>
                             <td class="unit">{{ $item->product?->unit ?? 'N/A' }}</td>
                             <td class="unit-price">{{ number_format($item->unit_price, 2) }}</td>
                             <td class="discount">{{ number_format($item->discount_percent ?? 0) }}%</td>
@@ -470,7 +478,7 @@
                         @if (($quotation->discount_amount ?? 0) > 0)
                             <tr class="total-row">
                                 <td colspan="7">SPECIAL DISCOUNT
-                                    ({{ number_format($quotation->discount_percent ?? 0, 2) }}%) (BDT)</td>
+                                    ({{ number_format($quotation->discount_percent ?? 0) }}%) (BDT)</td>
                                 <td class="total-price">{{ number_format($quotation->discount_amount ?? 0, 2) }}</td>
                             </tr>
                         @endif
@@ -490,19 +498,24 @@
                             </tr>
                         @endif
 
-                        @if (($quotation->vat_amount ?? 0) > 0)
+                        @if (($quotation->tax_amount ?? 0) > 0)
                             <tr class="total-row">
-                                <td colspan="7">VAT ({{ number_format($quotation->vat_percent ?? 0, 2) }}%) (BDT)
+                                <td colspan="7">AIT ({{ (float)($quotation->tax_percent ?? 0) }}%) (BDT)
                                 </td>
-                                <td class="total-price">{{ number_format($quotation->vat_amount ?? 0, 2) }}</td>
+                                <td class="total-price">{{ number_format($quotation->tax_amount ?? 0, 2) }}</td>
                             </tr>
                         @endif
 
-                        @if (($quotation->tax_amount ?? 0) > 0)
+                        <tr class="total-row">
+                            <td colspan="7">NET TOTAL (BDT)</td>
+                            <td class="total-price">{{ number_format($quotation->total_amount - ($quotation->vat_amount ?? 0), 2) }}</td>
+                        </tr>
+
+                        @if (($quotation->vat_amount ?? 0) > 0)
                             <tr class="total-row">
-                                <td colspan="7">AIT ({{ number_format($quotation->tax_percent ?? 0, 2) }}%) (BDT)
+                                <td colspan="7">VAT ({{ (float)($quotation->vat_percent ?? 0) }}%) (BDT)
                                 </td>
-                                <td class="total-price">{{ number_format($quotation->tax_amount ?? 0, 2) }}</td>
+                                <td class="total-price">{{ number_format($quotation->vat_amount ?? 0, 2) }}</td>
                             </tr>
                         @endif
 
