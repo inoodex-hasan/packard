@@ -223,33 +223,58 @@ class ProductController extends Controller
         $skipped = 0;
         $errors = [];
 
-        DB::beginTransaction();
-        try {
-            foreach ($rows as $line => $row) {
-                $name = trim((string)($row['name'] ?? ''));
-                $code = trim((string)($row['product_code'] ?? ''));
-                $unit = trim((string)($row['unit'] ?? ''));
-                $details = isset($row['details']) ? trim((string)$row['details']) : null;
-                $priceRaw = trim((string)($row['price'] ?? ''));
-                $price = is_numeric($priceRaw) ? (float)$priceRaw : null;
+        foreach ($rows as $line => $row) {
+            $name = trim((string)($row['name'] ?? $row[1] ?? $row[2] ?? ''));
+            $code = trim((string)($row['product_code'] ?? $row[2] ?? $row[3] ?? ''));
+            $unit = trim((string)($row['unit'] ?? $row[3] ?? $row[4] ?? ''));
+            $priceRaw = trim((string)($row['price'] ?? $row[4] ?? $row[5] ?? ''));
+            $details = isset($row['details']) ? trim((string)$row['details']) : (isset($row[5]) ? trim((string)$row[5]) : (isset($row[6]) ? trim((string)$row[6]) : null));
 
-                if ($name === '' && $code === '' && $unit === '' && ($priceRaw === '' || $priceRaw === '0')) {
-                    $skipped++;
-                    continue;
-                }
+            // Remove everything except digits and decimal point.
+            $priceClean = preg_replace('/[^0-9.]/', '', $priceRaw);
+            $price = (is_numeric($priceClean) && $priceClean !== '') ? (float)$priceClean : null;
 
-                if ($name === '' || $code === '' || $unit === '' || $price === null || $price < 0) {
-                    $errors[] = "Row {$line}: invalid required data.";
-                    continue;
-                }
+            if ($name === '' && $code === '' && $unit === '' && ($priceRaw === '' || $priceRaw === '0')) {
+                $skipped++;
+                continue;
+            }
 
-                $payload = [
-                    'name' => $name,
-                    'details' => $details ?: null,
-                    'unit' => $unit,
-                    'price' => $price,
-                ];
+            if ($name === '' || $code === '' || $unit === '' || $price === null || $price < 0) {
+                $missing = [];
+                if ($name === '') $missing[] = 'name';
+                if ($code === '') $missing[] = 'product_code';
+                if ($unit === '') $missing[] = 'unit';
+                if ($price === null) $missing[] = 'price';
 
+                $errors[] = "Row {$line}: missing or invalid " . implode(', ', $missing) . ".";
+                continue;
+            }
+
+            if (mb_strlen($name) > 255) {
+                $name = mb_substr($name, 0, 255);
+            }
+
+            if (mb_strlen($code) > 255 || mb_strlen($unit) > 255) {
+                $tooLong = [];
+                if (mb_strlen($code) > 255) $tooLong[] = 'product_code';
+                if (mb_strlen($unit) > 255) $tooLong[] = 'unit';
+                $errors[] = "Row {$line}: value too long for " . implode(', ', $tooLong) . ".";
+                continue;
+            }
+
+            if ($price > 99999999.99) {
+                $errors[] = "Row {$line}: price exceeds allowed limit.";
+                continue;
+            }
+
+            $payload = [
+                'name' => $name,
+                'details' => $details ?: null,
+                'unit' => $unit,
+                'price' => $price,
+            ];
+
+            try {
                 $existing = Product::where('product_code', $code)->first();
                 if ($existing) {
                     $existing->update($payload);
@@ -259,13 +284,10 @@ class ProductController extends Controller
                     Product::create($payload);
                     $created++;
                 }
+            } catch (\Throwable $e) {
+                $errors[] = "Row {$line}: database save failed for product code '{$code}'.";
+                continue;
             }
-
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return redirect()->route('products.index')
-                ->with('warning', 'Import failed while saving data.');
         }
 
         $message = "Import completed. Created: {$created}, Updated: {$updated}, Skipped: {$skipped}.";
@@ -275,7 +297,7 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', $message)
-            ->with('import_errors', array_slice($errors, 0, 20));
+            ->with('import_errors', array_slice($errors, 0, 50));
     }
 
     private function parseCsvRows(string $path): array
@@ -316,84 +338,121 @@ class ProductController extends Controller
     }
 
     private function parseXlsxRows(string $path): array
-    {
-        $zip = new ZipArchive();
-        if ($zip->open($path) !== true) {
-            throw new \RuntimeException('Cannot open XLSX');
+{
+    $zip = new ZipArchive();
+    if ($zip->open($path) !== true) {
+        throw new \RuntimeException('Cannot open XLSX');
+    }
+
+        $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+        $workbookXml = $zip->getFromName('xl/workbook.xml');
+        $workbookRelsXml = $zip->getFromName('xl/_rels/workbook.xml.rels');
+
+        $sheetCandidates = ['xl/worksheets/sheet1.xml'];
+        if ($workbookXml !== false && $workbookRelsXml !== false) {
+            $sheetCandidates = $this->extractWorksheetPaths($workbookXml, $workbookRelsXml);
+            if (empty($sheetCandidates)) {
+                $sheetCandidates = ['xl/worksheets/sheet1.xml'];
+            }
         }
 
-        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
-        $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+        $sheetXml = false;
+        $bestScore = -1;
+        foreach ($sheetCandidates as $sheetPath) {
+            $candidateXml = $zip->getFromName($sheetPath);
+            if ($candidateXml === false) {
+                continue;
+            }
+            $score = $this->scoreWorksheetHeader($candidateXml, $sharedXml ?: '');
+            if ($score > $bestScore) {
+                $bestScore = $score;
+                $sheetXml = $candidateXml;
+            }
+        }
         $zip->close();
 
         if ($sheetXml === false) {
             throw new \RuntimeException('Sheet not found');
         }
 
-        $shared = [];
-        if ($sharedXml !== false) {
-            $sx = simplexml_load_string($sharedXml);
-            if ($sx && isset($sx->si)) {
-                foreach ($sx->si as $si) {
-                    $shared[] = (string)($si->t ?? '');
-                }
+    // Parse shared strings
+    $shared = [];
+    if ($sharedXml !== false) {
+        $dom = new \DOMDocument();
+        @$dom->loadXML($sharedXml);
+        foreach ($dom->getElementsByTagName('si') as $si) {
+            $text = '';
+            foreach ($si->getElementsByTagName('t') as $t) {
+                $text .= $t->nodeValue;
             }
+            $shared[] = $text;
         }
-
-        $sheet = simplexml_load_string($sheetXml);
-        if (!$sheet || !isset($sheet->sheetData->row)) {
-            return [];
-        }
-
-        $headerByIndex = [];
-        $rows = [];
-        $line = 0;
-        foreach ($sheet->sheetData->row as $rowNode) {
-            $line++;
-            $cells = [];
-            foreach ($rowNode->c as $c) {
-                $ref = (string)$c['r'];
-                $idx = $this->columnIndexFromRef($ref);
-                $type = (string)$c['t'];
-                $value = '';
-                if ($type === 's') {
-                    $si = (int)($c->v ?? -1);
-                    $value = $shared[$si] ?? '';
-                } elseif ($type === 'inlineStr') {
-                    $value = (string)($c->is->t ?? '');
-                } else {
-                    $value = (string)($c->v ?? '');
-                }
-                $cells[$idx] = $value;
-            }
-
-            if ($line === 1) {
-                foreach ($cells as $idx => $value) {
-                    $headerByIndex[$idx] = $this->normalizeHeader($value);
-                }
-                continue;
-            }
-
-            if (count(array_filter($cells, fn($v) => trim((string)$v) !== '')) === 0) {
-                continue;
-            }
-
-            $mapped = [];
-            foreach ($headerByIndex as $idx => $key) {
-                if ($key === '') {
-                    continue;
-                }
-                $mapped[$key] = $cells[$idx] ?? null;
-            }
-            $rows[$line] = $mapped;
-        }
-
-        return $rows;
     }
+
+    // Parse sheet
+    $sheetDom = new \DOMDocument();
+    if (!@$sheetDom->loadXML($sheetXml)) {
+        throw new \RuntimeException('Cannot parse sheet XML');
+    }
+
+    $headerByIndex = [];
+    $rows = [];
+    $line = 0;
+
+    foreach ($sheetDom->getElementsByTagName('row') as $rowNode) {
+        $line++;
+        $cells = [];
+
+        foreach ($rowNode->getElementsByTagName('c') as $c) {
+            $ref  = $c->getAttribute('r');
+            $type = $c->getAttribute('t');
+            $idx  = $this->columnIndexFromRef($ref);
+
+            $vNode = $c->getElementsByTagName('v')->item(0);
+            $rawVal = $vNode ? $vNode->nodeValue : '';
+
+            if ($type === 's') {
+                $value = $shared[(int)$rawVal] ?? '';
+            } elseif ($type === 'inlineStr') {
+                $tNode = $c->getElementsByTagName('t')->item(0);
+                $value = $tNode ? $tNode->nodeValue : '';
+            } else {
+                $value = $rawVal;
+            }
+
+            $cells[$idx] = $value;
+        }
+
+        if ($line === 1) {
+            foreach ($cells as $idx => $value) {
+                $headerByIndex[$idx] = $this->normalizeHeader($value);
+            }
+            continue;
+        }
+
+        if (count(array_filter($cells, fn($v) => trim((string)$v) !== '')) === 0) {
+            continue;
+        }
+
+        $mapped = [];
+        foreach ($headerByIndex as $idx => $key) {
+            if ($key === '') continue;
+            $mapped[$key] = $cells[$idx] ?? null;
+        }
+        foreach ($cells as $idx => $value) {
+            $mapped[$idx] = $value;
+        }
+        $rows[$line] = $mapped;
+    }
+
+    return $rows;
+}
 
     private function normalizeHeader(string $header): string
     {
         $key = strtolower(trim($header));
+        // Remove any characters that aren't alphanumeric, spaces, or hyphens
+        $key = preg_replace('/[^a-z0-9\s\-]/', '', $key);
         $key = str_replace([' ', '-'], '_', $key);
         return $key;
     }
@@ -407,5 +466,106 @@ class ProductController extends Controller
             $index = ($index * 26) + (ord($ch) - 64);
         }
         return max(1, $index);
+    }
+
+    private function extractWorksheetPaths(string $workbookXml, string $workbookRelsXml): array
+    {
+        $paths = [];
+
+        $wbDom = new \DOMDocument();
+        $relsDom = new \DOMDocument();
+        if (!@$wbDom->loadXML($workbookXml) || !@$relsDom->loadXML($workbookRelsXml)) {
+            return $paths;
+        }
+
+        $wbXpath = new \DOMXPath($wbDom);
+        $wbXpath->registerNamespace('x', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+
+        $relsXpath = new \DOMXPath($relsDom);
+        $relsXpath->registerNamespace('r', 'http://schemas.openxmlformats.org/package/2006/relationships');
+
+        $relMap = [];
+        foreach ($relsXpath->query('//r:Relationship') as $relNode) {
+            $id = $relNode->attributes?->getNamedItem('Id')?->nodeValue ?? '';
+            $target = $relNode->attributes?->getNamedItem('Target')?->nodeValue ?? '';
+            if ($id !== '' && $target !== '') {
+                $relMap[$id] = 'xl/' . ltrim(str_replace('\\', '/', $target), '/');
+            }
+        }
+
+        foreach ($wbXpath->query('//x:sheets/x:sheet') as $sheetNode) {
+            $rid = $sheetNode->attributes?->getNamedItemNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id')?->nodeValue
+                ?? $sheetNode->attributes?->getNamedItem('r:id')?->nodeValue
+                ?? '';
+            if ($rid !== '' && isset($relMap[$rid])) {
+                $paths[] = $relMap[$rid];
+            }
+        }
+
+        return $paths;
+    }
+
+    private function scoreWorksheetHeader(string $sheetXml, string $sharedXml): int
+    {
+        $shared = [];
+        if ($sharedXml !== '') {
+            $dom = new \DOMDocument();
+            if (@$dom->loadXML($sharedXml)) {
+                $xpath = new \DOMXPath($dom);
+                $xpath->registerNamespace('x', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+                foreach ($xpath->query('//x:si') as $si) {
+                    $text = '';
+                    foreach ($xpath->query('.//x:t', $si) as $t) {
+                        $text .= $t->nodeValue;
+                    }
+                    $shared[] = $text;
+                }
+            }
+        }
+
+        $dom = new \DOMDocument();
+        if (!@$dom->loadXML($sheetXml)) {
+            return -1;
+        }
+
+        $xpath = new \DOMXPath($dom);
+        $xpath->registerNamespace('x', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+        $firstRow = $xpath->query('//x:sheetData/x:row[1]')->item(0);
+        if (!$firstRow) {
+            return -1;
+        }
+
+        $headers = [];
+        foreach ($xpath->query('./x:c', $firstRow) as $cellNode) {
+            $type = $cellNode->getAttribute('t');
+            $value = '';
+
+            if ($type === 's') {
+                $vNode = $xpath->query('./x:v', $cellNode)->item(0);
+                $si = $vNode ? (int)$vNode->textContent : -1;
+                $value = $shared[$si] ?? '';
+            } elseif ($type === 'inlineStr') {
+                $parts = [];
+                foreach ($xpath->query('./x:is//x:t', $cellNode) as $tNode) {
+                    $parts[] = $tNode->textContent;
+                }
+                $value = implode('', $parts);
+            } else {
+                $vNode = $xpath->query('./x:v', $cellNode)->item(0);
+                $value = $vNode ? (string)$vNode->textContent : '';
+            }
+
+            $headers[] = $this->normalizeHeader($value);
+        }
+
+        $headerSet = array_fill_keys($headers, true);
+        $score = 0;
+        foreach (['name', 'product_code', 'unit', 'price', 'details'] as $expected) {
+            if (isset($headerSet[$expected])) {
+                $score++;
+            }
+        }
+
+        return $score;
     }
 }
