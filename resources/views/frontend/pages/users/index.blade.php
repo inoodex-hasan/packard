@@ -59,7 +59,7 @@
                                                 <td>{{ $item->name }} <br><span
                                                         class="text-muted">{{ $item->roleName ?? 'N/A' }}</span>
                                                 </td>
-                                                <td>{{ $item->designation }}</td>
+                                                <td>{{ Str::limit($item->designation, 20, '...') }}</td>
                                                 <td>{{ $item->email }}</td>
                                                 <td>{{ $item->phone }}</td>
                                                 <!-- <td>{{ $item->roleName ?? 'N/A' }}</td> -->
