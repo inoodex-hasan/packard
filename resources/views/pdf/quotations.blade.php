@@ -297,7 +297,7 @@
         }
 
         .post-table-section {
-            margin-top: 18px;
+            margin-top: 8px;
         }
 
         /* Terms & Conditions */
@@ -305,16 +305,18 @@
             text-align: center;
             font-weight: bold;
             text-decoration: underline;
-            margin: 5pt 0 10pt 0;
-            font-size: 13pt;
+            margin: 3px 0 6px 0;
+            font-size: 12pt;
             page-break-inside: avoid;
             font-family: 'Century Gothic', Times, serif !important;
         }
 
-        .terms-item{
+        .terms-item {
             font-weight: bold;
             margin-left: 24pt;
-            line-height: 0.1;
+            margin-top: 0px;
+            margin-bottom: 2px;
+            line-height: 1.1;
         }
 
         /* .terms-table {
@@ -554,8 +556,8 @@
             <div class="terms-title">Terms and Conditions</div>
                 @foreach (explode("\n", $terms_conditions) as $index => $term)
                     @if (trim($term))
-                    <div class="terms-item" >
-                       <p class> {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}. {{ trim($term) }}</p>
+                    <div class="terms-item">
+                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}. {{ trim($term) }}
                     </div>
                     @endif
                 @endforeach

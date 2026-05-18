@@ -164,15 +164,15 @@
                                 <option value="">Choose or type designation...</option>
                                 @php
                                     $predefinedDesignations = [
-                                        'The Chairman',
-                                        'The Chief Executive Officer (CEO)',
-                                        'The Deputy Director',
-                                        'The Deputy Managing Director',
-                                        'The Director',
-                                        'The Founder',
-                                        'The General Manager',
-                                        'The Managing Director',
-                                        'The Proprietor',
+                                       'Chairman',
+                                        'Chief Executive Officer (CEO)',
+                                        'Deputy Director',
+                                        'Deputy Managing Director',
+                                        'Director',
+                                        'Founder',
+                                        'General Manager',
+                                        'Managing Director',
+                                        'Proprietor',
                                     ];
                                     $currentVal = old('highest_designation', $quotation->highest_designation);
                                 @endphp
