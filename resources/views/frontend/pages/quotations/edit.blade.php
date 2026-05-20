@@ -83,7 +83,7 @@
 
     @php
         $defaultTerms =
-            " Delivery timeline will be confirmed after order confirmation.\n Prices are in BDT.\n VAT/TAX are not included unless mentioned.\n Payment terms: As per mutual agreement.";
+            "Price Validity\t:\t10 days from the date of this offer.\nDelivery\t:\tWithin 24 hours, subject to prior sales.\nPayment\t:\t100% cash or cheque at the time of taking delivery.\nVAT\t:\tVAT is not included in the offered price.\nAIT\t:\tAIT is not included in the offered price.\nWarranty\t:\t1 (One) year warranty from the date of delivery.\n\nDelivery timeline will be confirmed after order confirmation.\nPrices are in BDT.\nVAT/TAX are not included unless mentioned.\nPayment terms: As per mutual agreement.";
         $hasClients = isset($clients) && $clients->count() > 0;
 
         // Determine client mode: if quotation has client_id, use existing mode
@@ -227,7 +227,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label">Terms & Conditions *</label>
-                            <textarea name="terms_conditions" class="form-control" rows="6" required>{{ old('terms_conditions', $quotation->terms_conditions ?: $defaultTerms) }}</textarea>
+                            <textarea name="terms_conditions" class="form-control" rows="8" required>{{ old('terms_conditions', $quotation->terms_conditions ?: $defaultTerms) }}</textarea>
                         </div>
                     </div>
                 </div>

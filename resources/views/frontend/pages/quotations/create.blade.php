@@ -84,7 +84,7 @@
     @php
         $defaultBody = "Dear Sir/Madam,\nWith reference to the above inquiry, we are pleased to offer our most competitive price for your kind consideration as follows.";
         $defaultTerms =
-            " Delivery timeline will be confirmed after order confirmation.\n Prices are in BDT.\n VAT/TAX are not included unless mentioned.\n Payment terms: As per mutual agreement.";
+            "Price Validity\t:\t10 days from the date of this offer.\nDelivery\t:\tWithin 24 hours, subject to prior sales.\nPayment\t:\t100% cash or cheque at the time of taking delivery.\nVAT\t:\tVAT is not included in the offered price.\nAIT\t:\tAIT is not included in the offered price.\nWarranty\t:\t1 (One) year warranty from the date of delivery.";
         $hasClients = isset($clients) && $clients->count() > 0;
         $oldClientMode = $hasClients ? old('client_mode', 'existing') : 'new';
     @endphp
@@ -243,7 +243,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label">Terms & Conditions *</label>
-                            <textarea name="terms_conditions" class="form-control" rows="6" required>{{ old('terms_conditions', $defaultTerms) }}</textarea>
+                            <textarea name="terms_conditions" class="form-control" rows="8" required>{{ old('terms_conditions', $defaultTerms) }}</textarea>
                         </div>
                     </div>
                 </div>

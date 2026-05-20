@@ -320,6 +320,46 @@
             line-height: 1.1;
         }
 
+        .terms-list {
+            display: table;
+            margin-left: 24pt;
+            margin-top: 2px;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 1.15;
+            font-family: 'Century Gothic', Times, serif !important;
+        }
+
+        .terms-row {
+            display: table-row;
+        }
+
+        .terms-number,
+        .terms-label,
+        .terms-colon,
+        .terms-value {
+            display: table-cell;
+            padding-bottom: 2px;
+            font-family: 'Century Gothic', Times, serif !important;
+        }
+
+        .terms-number {
+            width: 32px;
+        }
+
+        .terms-label {
+            width: 132px;
+        }
+
+        .terms-colon {
+            width: 22px;
+            text-align: center;
+        }
+
+        .terms-value {
+            width: 430px;
+        }
+
         /* .terms-table {
             width: 94%;
             margin-bottom: 30pt;
@@ -411,7 +451,7 @@
                                 <div style="margin-top: 8px;">
                                     <p><strong>Attention: {{ $attention_to }}</strong></p>
                                     @if (!empty($client_designation))
-                                        <p>{{ $client_designation }}</p>
+                                        <p style="margin-left: 59px;">{{ $client_designation }}</p>
                                     @endif
                                 </div>
                             @endif
@@ -420,7 +460,7 @@
                     <div class="header-content-right">
                         {{-- Reference & Date --}}
                         <div class="reference">
-                            <p>Date:{{ $quotation->quotation_date?->format('F d, Y') ?? 'N/A' }}</p>
+                            <p>Date: {{ $quotation->quotation_date?->format('F d, Y') ?? 'N/A' }}</p>
                             <p>Ref: {{ strtoupper($quotation->quotation_number ?? 'N/A') }}</p>
                         </div>
                     </div>
@@ -555,17 +595,42 @@
     @if (!empty($terms_conditions))
         <div class="post-table-section">
             <div class="terms-title">Terms and Conditions</div>
-                @foreach (explode("\n", $terms_conditions) as $index => $term)
-                    @if (trim($term))
-                    <div class="terms-item">
-                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}. {{ trim($term) }}
-                    </div>
+            <div class="terms-list">
+                @php
+                    $termNumber = 1;
+                @endphp
+                @foreach (explode("\n", $terms_conditions) as $term)
+                    @php
+                        $term = trim($term);
+                        $colonPosition = strpos($term, ':');
+                    @endphp
+                    @if ($term)
+                        @if ($colonPosition !== false)
+                            <div class="terms-row">
+                                <div class="terms-number">{{ str_pad($termNumber, 2, '0', STR_PAD_LEFT) }}.</div>
+                                <div class="terms-label">{{ trim(substr($term, 0, $colonPosition)) }}</div>
+                                <div class="terms-colon">:</div>
+                                <div class="terms-value">{{ trim(substr($term, $colonPosition + 1)) }}</div>
+                            </div>
+                        @else
+                            <div class="terms-row">
+                                <div class="terms-number">{{ str_pad($termNumber, 2, '0', STR_PAD_LEFT) }}.</div>
+                                <div class="terms-label">{{ $term }}</div>
+                                <div class="terms-colon"></div>
+                                <div class="terms-value"></div>
+                            </div>
+                        @endif
+                        @php
+                            $termNumber++;
+                        @endphp
                     @endif
                 @endforeach
+            </div>
 
             {{-- Signature Section --}}
             <div class="signature-section">
                 <div class="signature-name-section">
+                    <p>Thanking you and waiting for your order confirmation very soon.</p> <br>
                     <p>Best Regards,</p>
                     <p>{{ $company_name ?? 'N/A' }}</p>
                 </div>
