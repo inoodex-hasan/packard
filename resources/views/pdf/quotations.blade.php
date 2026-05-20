@@ -357,7 +357,7 @@
         }
 
         .terms-value {
-            width: 430px;
+            width: auto;
         }
 
         /* .terms-table {
