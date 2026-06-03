@@ -188,12 +188,12 @@ class QuotationController extends Controller
 
             $totalAfterDiscount = max(0, $subTotal - $discountAmount);
             $taxAmount = $totalAfterDiscount * ($taxPercent / 100);
-
-            // Base for VAT: Subtotal - Discount + Installation - RoundOff
-            $vatBase = max(0, $totalAfterDiscount + $installationCharge - $roundOff);
+            
+            // Base for VAT: Subtotal - Discount + Installation - RoundOff - Tax
+            $vatBase = max(0, $totalAfterDiscount + $installationCharge - $roundOff - $taxAmount);
             $vatAmount = $vatBase * ($vatPercent / 100);
-
-            $totalAmount = $vatBase + $vatAmount + $taxAmount;
+            
+            $totalAmount = $vatBase + $vatAmount;
 
             // Create quotation with snapshot fields
             $quotation = Quotation::create([
@@ -454,12 +454,12 @@ class QuotationController extends Controller
 
                 $totalAfterDiscount = max(0, $subTotal - $discountAmount);
                 $taxAmount = $totalAfterDiscount * ($taxPercent / 100);
-
-                // Base for VAT: Subtotal - Discount + Installation - RoundOff
-                $vatBase = max(0, $totalAfterDiscount + $installationCharge - $roundOff);
+                
+                // Base for VAT: Subtotal - Discount + Installation - RoundOff - Tax
+                $vatBase = max(0, $totalAfterDiscount + $installationCharge - $roundOff - $taxAmount);
                 $vatAmount = $vatBase * ($vatPercent / 100);
-
-                $totalAmount = $vatBase + $vatAmount + $taxAmount;
+                
+                $totalAmount = $vatBase + $vatAmount;
 
                 // Update quotation with snapshot fields
                 $quotation->update([
