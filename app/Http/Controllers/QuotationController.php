@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Schema};
 use App\Models\{Client, CompanyDetail, Product, Quotation, QuotationItem, User};
 use Barryvdh\DomPDF\Facade\Pdf;
+use ZipArchive;
 
 class QuotationController extends Controller
 {
@@ -32,6 +33,74 @@ class QuotationController extends Controller
             ->get();
 
         return view('frontend.pages.quotations.index', compact('quotations'));
+    }
+
+    public function export(Request $request)
+    {
+        $quotations = Quotation::with('client')
+            ->when($request->filled('quotation_number'), function ($query) use ($request) {
+                $query->where('quotation_number', 'like', '%' . trim((string) $request->quotation_number) . '%');
+            })
+            ->when($request->filled('client_name'), function ($query) use ($request) {
+                $clientName = trim((string) $request->client_name);
+                $query->whereHas('client', function ($clientQuery) use ($clientName) {
+                    $clientQuery->where('name', 'like', '%' . $clientName . '%');
+                });
+            })
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('quotation_date', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('quotation_date', '<=', $request->date_to);
+            })
+            ->latest()
+            ->get();
+
+        $headers = [
+            'SL',
+            'Quotation No.',
+            'Client Name',
+            'Client Phone',
+            'Client Email',
+            'Quotation Date',
+            'Sub Total',
+            'Discount Amount',
+            'VAT Amount',
+            'Tax Amount',
+            'Installation Charge',
+            'Total Amount',
+            'Signatory',
+        ];
+
+        $rows = [];
+        $sl = 1;
+
+        foreach ($quotations as $quotation) {
+            $clientName = $quotation->client?->name ?? $quotation->client_name ?? '';
+            $clientPhone = $quotation->client?->phone ?? $quotation->client_phone ?? '';
+            $clientEmail = $quotation->client?->email ?? $quotation->client_email ?? '';
+            $date = optional($quotation->quotation_date)->format('Y-m-d') ?? '';
+
+            $rows[] = [
+                $sl++,
+                (string)$quotation->quotation_number,
+                $clientName,
+                (string)$clientPhone,
+                $clientEmail,
+                $date,
+                $quotation->sub_total !== null ? (float)$quotation->sub_total : '',
+                $quotation->discount_amount !== null ? (float)$quotation->discount_amount : '',
+                $quotation->vat_amount !== null ? (float)$quotation->vat_amount : '',
+                $quotation->tax_amount !== null ? (float)$quotation->tax_amount : '',
+                $quotation->installation_charge !== null ? (float)$quotation->installation_charge : '',
+                $quotation->total_amount !== null ? (float)$quotation->total_amount : '',
+                $quotation->signatory_name ?? '',
+            ];
+        }
+
+        $fileName = 'quotations_' . date('Y-m-d') . '.xlsx';
+
+        return \App\Helpers\SimpleXlsxExporter::download($fileName, $headers, $rows);
     }
 
     public function create()

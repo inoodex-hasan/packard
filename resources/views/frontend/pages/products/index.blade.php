@@ -5,9 +5,14 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="fw-bold">Product List</h3>
-            <a href="{{ route('products.create') }}" class="btn btn-primary rounded-pill px-4">
-                + Add Product
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('products.export', request()->query()) }}" class="btn btn-outline-success rounded-pill px-3">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('products.create') }}" class="btn btn-primary rounded-pill px-4">
+                    + Add Product
+                </a>
+            </div>
         </div>
 
         {{-- @if (session('success'))
@@ -117,7 +122,7 @@
                         @forelse($products as $key => $product)
                             <tr>
                                 <td>{{ $products->firstItem() + $key }}</td>
-                                <td>{{ Str::limit($product->name, 140) }}</td>
+                                <td>{{ Str::limit($product->name, 50) }}</td>
                                 <td>{{ $product->product_code }}</td>
                                 <td>{{ ucfirst($product->unit) }}</td>
                                 <td>{{ number_format($product->price, 2) }}</td>
@@ -130,7 +135,8 @@
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <a class="dropdown-item"
-                                                    href="{{ route('products.edit', $product->id) }}">Edit</a>
+                                                    href="{{ route('products.edit', $product->id) }}">
+                                                    <i class="far fa-edit me-2"></i>Edit</a>
                                             </li>
                                             <li>
                                                 <form action="{{ route('products.destroy', $product->id) }}"
@@ -138,7 +144,8 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button onclick="return confirm('Delete this product?')" type="submit"
-                                                        class="dropdown-item text-danger">Delete</button>
+                                                        class="dropdown-item text-danger">
+                                                        <i class="far fa-trash-alt me-2"></i>Delete</button>
                                                 </form>
                                             </li>
                                         </ul>

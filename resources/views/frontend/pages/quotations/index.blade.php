@@ -6,9 +6,14 @@
     <div class="container-fluid mt-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <h3 class="fw-bold mb-0">Quotation Management</h3>
-            <a href="{{ route('quotations.create') }}" class="btn btn-primary rounded-pill px-4">
-                <i class="fas fa-plus me-2"></i>Create Quotation
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('quotations.export', request()->query()) }}" class="btn btn-outline-success rounded-pill px-3">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('quotations.create') }}" class="btn btn-primary rounded-pill px-4">
+                    <i class="fas fa-plus me-2"></i>Create Quotation
+                </a>
+            </div>
         </div>
 
         {{-- @if (session('success'))
@@ -50,7 +55,6 @@
                                 <th>Quotation No.</th>
                                 <th>Client</th>
                                 <th>Created Date</th>
-                                {{-- <th>Expiry Date</th> --}}
                                 <th>Total Amount</th>
                                 <th>Action</th>
                             </tr>
@@ -65,9 +69,8 @@
                                             {{ $quotation->quotation_number }}
                                         </a>
                                     </td>
-                                    <td>{{ $quotation->client?->name ?? 'No Client' }}</td>
+                                    <td>{{ Str::limit($quotation->client?->name, 30) ?? 'N/A' }}</td>
                                     <td>{{ optional($quotation->quotation_date)->format('M d, Y') }}</td>
-                                    {{-- <td>{{ optional($quotation->expiry_date)->format('M d, Y') }}</td> --}}
                                     <td>{{ number_format($quotation->total_amount, 2) }}</td>
                                     <td>
                                         <div class="dropdown">

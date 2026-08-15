@@ -67,10 +67,10 @@
                             @forelse ($clients as $client)
                                 <tr>
                                     <td>{{ $clients->firstItem() + $loop->index }}</td>
-                                    <td class="fw-semibold">{{ $client->name }}</td>
+                                    <td class="fw-semibold">{{ Str::limit($client->name, 30) }}</td>
                                     <td>{{ $client->phone }}</td>
                                     <td>{{ $client->email }}</td>
-                                    <td>{{ $client->address }}</td>
+                                    <td>{{ Str::limit($client->address, 30) }}</td>
                                     <td class="text-end">
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-light border" type="button"
@@ -80,19 +80,21 @@
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('clients.show', $client->id) }}">View</a>
+                                                        href="{{ route('clients.show', $client->id) }}">
+                                                        <i class="fas fa-eye me-2"></i>View</a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('clients.edit', $client->id) }}">Edit</a>
+                                                        href="{{ route('clients.edit', $client->id) }}"><i
+                                                            class="fas fa-edit me-2"></i>Edit</a>
                                                 </li>
                                                 <li>
                                                     <form action="{{ route('clients.destroy', $client->id) }}"
                                                         method="POST" onsubmit="return confirm('Delete this client?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit"
-                                                            class="dropdown-item text-danger">Delete</button>
+                                                        <button type="submit" class="dropdown-item text-danger">
+                                                            <i class="fas fa-trash me-2"></i>Delete</button>
                                                     </form>
                                                 </li>
                                             </ul>

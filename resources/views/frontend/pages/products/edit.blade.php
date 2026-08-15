@@ -2,12 +2,13 @@
 
 @section('content')
     <div class="container-fluid mt-4">
-
-        <h3 class="mb-4 fw-bold">Edit Product</h3>
-        {{-- @if (session('warning'))
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h3 class="fw-bold mb-0">Edit Product</h3>
+            <a href="{{ route('products.index') }}" class="btn btn-secondary rounded-pill px-4">Back</a>
+        </div>
+        @if (session('warning'))
             <div class="alert alert-warning">{{ session('warning') }}</div>
-        @endif --}}
-
+        @endif
         <div class="card shadow-sm border-0 rounded-3">
             <div class="card-body p-4">
 

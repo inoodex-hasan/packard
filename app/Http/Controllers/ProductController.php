@@ -189,6 +189,53 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 
+    public function export(Request $request)
+    {
+        if (!$this->hasProductsTable()) {
+            return redirect()->route('products.index')
+                ->with('warning', $this->missingProductsTableMessage());
+        }
+
+        $query = Product::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('product_code')) {
+            $query->where('product_code', 'like', '%' . $request->product_code . '%');
+        }
+
+        $allowedSorts = ['name', 'product_code', 'unit', 'price', 'created_at'];
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDir = strtolower((string)$request->get('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        if (!in_array($sortBy, $allowedSorts, true)) {
+            $sortBy = 'created_at';
+        }
+
+        $headers = ['SL', 'Name', 'Product Code', 'Unit', 'Price', 'Details'];
+
+        $rows = [];
+        $sl = 1;
+        $products = $query->orderBy($sortBy, $sortDir)->get();
+
+        foreach ($products as $product) {
+            $rows[] = [
+                $sl++,
+                $product->name,
+                (string)$product->product_code,
+                $product->unit,
+                $product->price !== null ? (float)$product->price : '',
+                $product->details ?? '',
+            ];
+        }
+
+        $fileName = 'products_' . date('Y-m-d') . '.xlsx';
+
+        return \App\Helpers\SimpleXlsxExporter::download($fileName, $headers, $rows);
+    }
+
     public function import(Request $request)
     {
         if (!$this->hasProductsTable()) {

@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Quotations
     Route::middleware('permission:Quotation Management')->group(function () {
+        Route::get('quotations/export', [QuotationController::class, 'export'])->name('quotations.export');
         Route::resource('quotations', QuotationController::class);
         Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'generatePDF'])->name('quotations.pdf');
         Route::get('quotations/{quotation}/pdf-preview', [QuotationController::class, 'preview'])->name('quotations.pdf.preview');
@@ -32,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Products
     Route::middleware('permission:Product Management')->group(function () {
+        Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
         Route::resource('products', ProductController::class);
         Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
     });

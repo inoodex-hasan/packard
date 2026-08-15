@@ -97,18 +97,18 @@
                                                     <tr>
                                                         <td class="text-center">{{ $index + 1 }}.</td>
                                                         <td>
-                                                            <strong>{{ $item->product->name ?? 'N/A' }}</strong>
+                                                            <strong>{{ Str::limit($item->product->name, 50) ?? 'N/A' }}</strong>
                                                             @if ($item->product->brand->name ?? false)
                                                                 <br><small class="text-muted">Brand:
-                                                                    {{ $item->product->brand->name }}</small>
+                                                                    {{ Str::limit($item->product->brand->name, 50) }}</small>
                                                             @endif
                                                             @if ($item->product->model ?? false)
                                                                 <br><small class="text-muted">Model:
-                                                                    {{ $item->product->model }}</small>
+                                                                    {{ Str::limit($item->product->model, 50) }}</small>
                                                             @endif
                                                             @if ($item->description)
                                                                 <br><small
-                                                                    class="text-muted">{{ $item->description }}</small>
+                                                                    class="text-muted">{{ Str::limit($item->description, 50) }}</small>
                                                             @endif
                                                         </td>
                                                         <td class="text-center">{{ $item->quantity }}</td>
