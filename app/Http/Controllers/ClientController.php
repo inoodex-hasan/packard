@@ -34,6 +34,55 @@ class ClientController extends Controller
         return view('frontend.pages.clients.index', compact('clients'));
     }
 
+    public function export(Request $request)
+    {
+        $clients = Client::query()
+            ->when($search = $request->input('search'), function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($request->input('date_from'), function ($query, $dateFrom) {
+                $query->whereDate('created_at', '>=', $dateFrom);
+            })
+            ->when($request->input('date_to'), function ($query, $dateTo) {
+                $query->whereDate('created_at', '<=', $dateTo);
+            })
+            ->latest()
+            ->get();
+
+        $headers = [
+            'SL',
+            'Name',
+            'Highest Designation',
+            'Phone',
+            'Email',
+            'Address',
+            'Created Date',
+        ];
+
+        $rows = [];
+        $sl = 1;
+
+        foreach ($clients as $client) {
+            $rows[] = [
+                $sl++,
+                $client->name,
+                $client->highest_designation ?? '',
+                (string)$client->phone,
+                $client->email ?? '',
+                $client->address ?? '',
+                $client->created_at ? $client->created_at->format('Y-m-d') : '',
+            ];
+        }
+
+        $fileName = 'clients_' . date('Y-m-d') . '.xlsx';
+
+        return \App\Helpers\SimpleXlsxExporter::download($fileName, $headers, $rows);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Clients
     Route::middleware('permission:Client Management')->group(function () {
+        Route::get('clients/export', [ClientController::class, 'export'])->name('clients.export');
         Route::resource('clients', ClientController::class);
     });
 

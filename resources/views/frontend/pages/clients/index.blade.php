@@ -22,7 +22,12 @@
     <div class="container-fluid mt-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <h3 class="fw-bold mb-0">Clients</h3>
-            <a href="{{ route('clients.create') }}" class="btn btn-primary rounded-pill px-4">Add Client</a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('clients.export', request()->query()) }}" class="btn btn-outline-success rounded-pill px-3">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ route('clients.create') }}" class="btn btn-primary rounded-pill px-4">Add Client</a>
+            </div>
         </div>
 
         <div class="card shadow-sm border-0 rounded-3 mb-3">
